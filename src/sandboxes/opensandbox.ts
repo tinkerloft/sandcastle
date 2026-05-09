@@ -6,9 +6,8 @@
  *   await run({ agent: claudeCode("claude-opus-4-6"), sandbox: openSandbox({ image: "ubuntu" }) });
  */
 
-import { readFile, stat, mkdir, writeFile } from "node:fs/promises";
-import { dirname, join, relative } from "node:path";
-import { readdir } from "node:fs/promises";
+import { readdir, readFile, stat, mkdir, writeFile } from "node:fs/promises";
+import { dirname, join, posix, relative, sep } from "node:path";
 import {
   createIsolatedSandboxProvider,
   type ExecResult,
@@ -228,10 +227,10 @@ export const openSandbox = (
             };
             const files = await walk(hostPath);
             for (const file of files) {
-              const rel = relative(hostPath, file);
+              const rel = relative(hostPath, file).split(sep).join("/");
               const content = await readFile(file);
               await sandbox.files.writeFiles([
-                { path: join(sandboxPath, rel), data: content },
+                { path: posix.join(sandboxPath, rel), data: content },
               ]);
             }
           } else {
