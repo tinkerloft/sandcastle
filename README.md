@@ -58,7 +58,7 @@ import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
 
 await run({
   agent: claudeCode("claude-opus-4-6"),
-  sandbox: docker(), // or podman(), vercel(), or your own provider
+  sandbox: docker(), // or podman(), vercel(), openSandbox({ image: "ubuntu" }), or your own provider
   promptFile: ".sandcastle/prompt.md",
 });
 ```
@@ -67,12 +67,13 @@ await run({
 
 Sandcastle uses a `SandboxProvider` to create isolated environments. The `sandbox` option on `run()` and `createSandbox()` accepts any provider. A no-sandbox option is also available for `interactive()` and `wt.interactive()`. Built-in providers:
 
-| Provider   | Import path                                | Type       | Accepted by                                   |
-| ---------- | ------------------------------------------ | ---------- | --------------------------------------------- |
-| Docker     | `@ai-hero/sandcastle/sandboxes/docker`     | Bind-mount | `run()`, `createSandbox()`, `interactive()`   |
-| Podman     | `@ai-hero/sandcastle/sandboxes/podman`     | Bind-mount | `run()`, `createSandbox()`, `interactive()`   |
-| Vercel     | `@ai-hero/sandcastle/sandboxes/vercel`     | Isolated   | `run()`, `createSandbox()`, `interactive()`   |
-| No-sandbox | `@ai-hero/sandcastle/sandboxes/no-sandbox` | None       | `interactive()`, `wt.interactive()` (default) |
+| Provider    | Import path                                 | Type       | Accepted by                                   |
+| ----------- | ------------------------------------------- | ---------- | --------------------------------------------- |
+| Docker      | `@ai-hero/sandcastle/sandboxes/docker`      | Bind-mount | `run()`, `createSandbox()`, `interactive()`   |
+| Podman      | `@ai-hero/sandcastle/sandboxes/podman`      | Bind-mount | `run()`, `createSandbox()`, `interactive()`   |
+| Vercel      | `@ai-hero/sandcastle/sandboxes/vercel`      | Isolated   | `run()`, `createSandbox()`, `interactive()`   |
+| OpenSandbox | `@ai-hero/sandcastle/sandboxes/opensandbox` | Isolated   | `run()`, `createSandbox()`, `interactive()`   |
+| No-sandbox  | `@ai-hero/sandcastle/sandboxes/no-sandbox`  | None       | `interactive()`, `wt.interactive()` (default) |
 
 Worktree methods (`wt.run()`, `wt.interactive()`, `wt.createSandbox()`) accept the same providers as their top-level counterparts. `wt.interactive()` defaults to `noSandbox()` when no sandbox is specified.
 
@@ -80,9 +81,10 @@ Worktree methods (`wt.run()`, `wt.interactive()`, `wt.createSandbox()`) accept t
 import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
 import { podman } from "@ai-hero/sandcastle/sandboxes/podman";
 import { vercel } from "@ai-hero/sandcastle/sandboxes/vercel";
+import { openSandbox } from "@ai-hero/sandcastle/sandboxes/opensandbox";
 import { noSandbox } from "@ai-hero/sandcastle/sandboxes/no-sandbox";
 
-// Docker, Podman, and Vercel are interchangeable in run() and createSandbox():
+// Docker, Podman, Vercel, and OpenSandbox are interchangeable in run() and createSandbox():
 await run({
   agent: claudeCode("claude-opus-4-6"),
   sandbox: docker(),
@@ -1136,6 +1138,7 @@ For real-world examples, see:
 
 - [`src/sandboxes/docker.ts`](src/sandboxes/docker.ts) — bind-mount provider using Docker containers (with SELinux label support)
 - [`src/sandboxes/vercel.ts`](src/sandboxes/vercel.ts) — isolated provider using Vercel Firecracker microVMs via `@vercel/sandbox`
+- [`src/sandboxes/opensandbox.ts`](src/sandboxes/opensandbox.ts) — isolated provider using OpenSandbox containers via `@alibaba-group/opensandbox`
 - [`src/sandboxes/podman.ts`](src/sandboxes/podman.ts) — bind-mount provider using Podman containers (with SELinux label support)
 - [`src/sandboxes/test-isolated.ts`](src/sandboxes/test-isolated.ts) — isolated provider using temp directories (used in tests)
 

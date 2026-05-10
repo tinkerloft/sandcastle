@@ -26,6 +26,10 @@
       "import": "./dist/sandboxes/daytona.js",
       "types": "./dist/sandboxes/daytona.d.ts"
     },
+    "./sandboxes/opensandbox": {
+      "import": "./dist/sandboxes/opensandbox.js",
+      "types": "./dist/sandboxes/opensandbox.d.ts"
+    },
     "./sandboxes/no-sandbox": {
       "import": "./dist/sandboxes/no-sandbox.js",
       "types": "./dist/sandboxes/no-sandbox.d.ts"
@@ -84,13 +88,17 @@
   },
   "peerDependencies": {
     "@vercel/sandbox": ">=1.0.0",
-    "@daytona/sdk": "^0.164.0"
+    "@daytona/sdk": "^0.164.0",
+    "@alibaba-group/opensandbox": ">=0.1.0"
   },
   "peerDependenciesMeta": {
     "@vercel/sandbox": {
       "optional": true
     },
     "@daytona/sdk": {
+      "optional": true
+    },
+    "@alibaba-group/opensandbox": {
       "optional": true
     }
   },
