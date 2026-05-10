@@ -16,7 +16,7 @@ Here are the last 10 commits:
 
 <issue>
 
-!`gh issue view {{ISSUE_NUMBER}}`
+!`gh issue view {{ISSUE_NUMBER}} --repo {{REPO}}`
 
 </issue>
 

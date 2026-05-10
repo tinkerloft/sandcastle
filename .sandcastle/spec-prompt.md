@@ -12,7 +12,7 @@ Verify that the implementation on branch {{BRANCH}} satisfies every requirement 
 
 <issue>
 
-!`gh issue view {{ISSUE_NUMBER}} --comments`
+!`gh issue view {{ISSUE_NUMBER}} --repo {{REPO}} --comments`
 
 </issue>
 

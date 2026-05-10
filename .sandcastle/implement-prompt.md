@@ -2,7 +2,7 @@
 
 Fix issue #{{ISSUE_NUMBER}}: {{ISSUE_TITLE}}
 
-Pull in the issue using `gh issue view {{ISSUE_NUMBER}} --comments`. Comments may contain additional requirements or corrections — treat them as authoritative. If it has a parent PRD, pull that in too.
+Pull in the issue using `gh issue view {{ISSUE_NUMBER}} --repo {{REPO}} --comments`. Comments may contain additional requirements or corrections — treat them as authoritative. If it has a parent PRD, pull that in too.
 
 Only work on the issue specified.
 

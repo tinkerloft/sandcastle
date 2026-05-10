@@ -4,6 +4,7 @@ import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
 const ISSUE_NUMBER = 1;
 const ISSUE_TITLE = "feat: add openSandbox() isolated sandbox provider";
 const BRANCH = "feat/opensandbox-provider";
+const REPO = "tinkerloft/sandcastle";
 
 await using sandbox = await sandcastle.createSandbox({
   sandbox: docker(),
@@ -39,6 +40,7 @@ if (result.commits.length > 0) {
       ISSUE_NUMBER: String(ISSUE_NUMBER),
       ISSUE_TITLE,
       BRANCH,
+      REPO,
     },
   });
 
@@ -51,6 +53,7 @@ if (result.commits.length > 0) {
       ISSUE_NUMBER: String(ISSUE_NUMBER),
       ISSUE_TITLE,
       BRANCH,
+      REPO,
     },
   });
 } else {
