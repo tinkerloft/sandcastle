@@ -134,9 +134,19 @@ export const openSandbox = (
             onLine?: (line: string) => void;
             cwd?: string;
             sudo?: boolean;
+            stdin?: string;
           },
         ): Promise<ExecResult> => {
-          const effectiveCommand = opts?.sudo ? `sudo ${command}` : command;
+          let effectiveCommand = opts?.sudo ? `sudo ${command}` : command;
+
+          if (opts?.stdin !== undefined) {
+            const stdinFile = `/tmp/.sandcastle-stdin-${Date.now()}-${Math.random().toString(36).slice(2)}`;
+            await sandbox.files.writeFiles([
+              { path: stdinFile, data: opts.stdin },
+            ]);
+            effectiveCommand = `${effectiveCommand} < ${stdinFile}`;
+          }
+
           const runOpts = {
             workingDirectory: opts?.cwd ?? OPENSANDBOX_WORKTREE_PATH,
           };
@@ -146,7 +156,6 @@ export const openSandbox = (
             const stdoutLines: string[] = [];
             const stderrChunks: string[] = [];
             let stdoutPartial = "";
-            let stderrPartial = "";
 
             const execution = await sandbox.commands.run(
               effectiveCommand,
@@ -162,12 +171,7 @@ export const openSandbox = (
                   }
                 },
                 onStderr: (msg: { text: string }) => {
-                  const text = stderrPartial + msg.text;
-                  const lines = text.split("\n");
-                  stderrPartial = lines.pop() ?? "";
-                  for (const line of lines) {
-                    stderrChunks.push(line);
-                  }
+                  stderrChunks.push(msg.text);
                 },
               },
             );
@@ -176,13 +180,10 @@ export const openSandbox = (
               stdoutLines.push(stdoutPartial);
               onLine(stdoutPartial);
             }
-            if (stderrPartial) {
-              stderrChunks.push(stderrPartial);
-            }
 
             return {
               stdout: stdoutLines.join("\n"),
-              stderr: stderrChunks.join("\n"),
+              stderr: stderrChunks.join(""),
               exitCode: execution.exitCode ?? 0,
             };
           }
