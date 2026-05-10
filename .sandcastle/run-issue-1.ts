@@ -25,7 +25,6 @@ const result = await sandbox.run({
     ISSUE_TITLE,
     BRANCH,
   },
-  logging: { type: "stdout" },
 });
 
 if (result.commits.length > 0) {
@@ -41,7 +40,6 @@ if (result.commits.length > 0) {
       ISSUE_TITLE,
       BRANCH,
     },
-    logging: { type: "stdout" },
   });
 
   console.log("\nRunning code quality review...");
@@ -54,7 +52,6 @@ if (result.commits.length > 0) {
       ISSUE_TITLE,
       BRANCH,
     },
-    logging: { type: "stdout" },
   });
 } else {
   console.log("\nNo commits produced.");

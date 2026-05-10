@@ -25,5 +25,4 @@ await sandbox.run({
     ISSUE_TITLE,
     BRANCH,
   },
-  logging: { type: "stdout" },
 });
