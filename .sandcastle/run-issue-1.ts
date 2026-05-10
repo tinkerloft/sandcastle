@@ -25,6 +25,7 @@ const result = await sandbox.run({
     ISSUE_NUMBER: String(ISSUE_NUMBER),
     ISSUE_TITLE,
     BRANCH,
+    REPO,
   },
 });
 
