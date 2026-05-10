@@ -93,15 +93,15 @@ export const openSandbox = (
 ): IsolatedSandboxProvider =>
   createIsolatedSandboxProvider({
     name: "opensandbox",
-    env: options?.env,
+    env: options.env,
     create: async (createOptions): Promise<IsolatedSandboxHandle> => {
       const { Sandbox, ConnectionConfig } =
         await import("@alibaba-group/opensandbox");
 
       const connectionConfig = new ConnectionConfig({
-        domain: options?.domain,
-        apiKey: options?.apiKey,
-        protocol: options?.protocol,
+        domain: options.domain,
+        apiKey: options.apiKey,
+        protocol: options.protocol,
       });
 
       const createParams: Record<string, unknown> = {
@@ -109,12 +109,12 @@ export const openSandbox = (
       };
 
       createParams.image = options.image;
-      if (options?.snapshotId) createParams.snapshotId = options.snapshotId;
-      if (options?.timeoutSeconds !== undefined)
+      if (options.snapshotId) createParams.snapshotId = options.snapshotId;
+      if (options.timeoutSeconds !== undefined)
         createParams.timeoutSeconds = options.timeoutSeconds;
-      if (options?.entrypoint) createParams.entrypoint = options.entrypoint;
-      if (options?.resource) createParams.resource = options.resource;
-      if (options?.networkPolicy)
+      if (options.entrypoint) createParams.entrypoint = options.entrypoint;
+      if (options.resource) createParams.resource = options.resource;
+      if (options.networkPolicy)
         createParams.networkPolicy = options.networkPolicy;
 
       createParams.env = createOptions.env;

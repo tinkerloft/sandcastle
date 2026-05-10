@@ -112,9 +112,6 @@ describe("openSandbox()", () => {
     expect(provider.tag).toBe("isolated");
   });
 
-  // ---------------------------------------------------------------------------
-  // exec() — stdin support
-  // ---------------------------------------------------------------------------
   describe("exec() stdin support", () => {
     it("writes stdin to a temp file and pipes it to the command", async () => {
       const provider = openSandbox({ image: "ubuntu" });
@@ -150,9 +147,6 @@ describe("openSandbox()", () => {
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // exec() — stderr handling
-  // ---------------------------------------------------------------------------
   describe("exec() stderr handling", () => {
     it("joins stderr chunks without inserting extra newlines", async () => {
       mockRun.mockImplementation(
@@ -198,9 +192,6 @@ describe("openSandbox()", () => {
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // Fix 4: Non-streaming exec must join stdout/stderr with "\n"
-  // ---------------------------------------------------------------------------
   describe("exec() non-streaming newline joining", () => {
     it("joins stdout log entries with newlines in non-streaming mode", async () => {
       mockRun.mockResolvedValue({
@@ -235,9 +226,6 @@ describe("openSandbox()", () => {
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // Fix 5: worktreePath must be /home/user/sandcastle/worktree
-  // ---------------------------------------------------------------------------
   describe("worktreePath", () => {
     it("sets worktreePath to /home/user/sandcastle/worktree", async () => {
       const provider = openSandbox({ image: "ubuntu" });
@@ -247,9 +235,6 @@ describe("openSandbox()", () => {
     });
   });
 
-  // ---------------------------------------------------------------------------
-  // Fix 1: copyIn must use tar for directories
-  // ---------------------------------------------------------------------------
   describe("copyIn() tar-based transfer", () => {
     it("uses tar to transfer directories instead of file-by-file walk", async () => {
       const { execSync } = await import("node:child_process");
