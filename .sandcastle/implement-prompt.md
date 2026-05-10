@@ -33,6 +33,18 @@ If applicable, use RGR to complete the task.
 3. REPEAT until done
 4. REFACTOR the code
 
+# RESOURCE CLEANUP
+
+Every resource you create (temp files, connections, sessions) must be cleaned up. Use `try/finally` or include cleanup in the command that uses the resource. A `writeFiles` with no corresponding delete is a bug, not a style issue.
+
+# TEST STANDARDS
+
+Before writing tests, read the Testing section of `.sandcastle/CODING_STANDARDS.md`. Enforce these rules strictly:
+
+- Tests verify observable behaviour through the public interface only — not how the implementation works internally
+- Only mock at system boundaries (external SDKs, file system, time/randomness) — never mock modules owned by this repo
+- A test that would break on a correct internal refactor is a bad test — rewrite it
+
 # FEEDBACK LOOPS
 
 Before committing, run `npm run typecheck` and `npm run test` to ensure the tests pass.
