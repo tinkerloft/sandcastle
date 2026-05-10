@@ -6,8 +6,10 @@
  *   await run({ agent: claudeCode("claude-opus-4-6"), sandbox: openSandbox({ image: "ubuntu" }) });
  */
 
-import { readdir, readFile, stat, mkdir, writeFile } from "node:fs/promises";
-import { dirname, join, posix, relative, sep } from "node:path";
+import { execSync } from "node:child_process";
+import { readFile, stat, mkdir, writeFile, unlink } from "node:fs/promises";
+import { tmpdir } from "node:os";
+import { dirname, join } from "node:path";
 import {
   createIsolatedSandboxProvider,
   type ExecResult,
@@ -15,19 +17,19 @@ import {
   type IsolatedSandboxProvider,
 } from "../SandboxProvider.js";
 
-const OPENSANDBOX_WORKTREE_PATH = "/home/user/workspace";
+const OPENSANDBOX_WORKTREE_PATH = "/home/user/sandcastle/worktree";
 
 export interface OpenSandboxOptions {
   /**
    * OpenSandbox server domain (host:port).
-   * Falls back to the `OPENSANDBOX_DOMAIN` environment variable.
+   * Falls back to the `OPEN_SANDBOX_DOMAIN` environment variable.
    * Defaults to `"localhost:8080"`.
    */
   readonly domain?: string;
 
   /**
    * API key for authentication.
-   * Falls back to the `OPENSANDBOX_API_KEY` environment variable.
+   * Falls back to the `OPEN_SANDBOX_API_KEY` environment variable.
    */
   readonly apiKey?: string;
 
@@ -41,7 +43,7 @@ export interface OpenSandboxOptions {
    * Container image to use for the sandbox.
    * Supports a plain image string or an object with auth credentials.
    */
-  readonly image?:
+  readonly image:
     | string
     | { uri: string; auth?: { username: string; password: string } };
 
@@ -87,7 +89,7 @@ export interface OpenSandboxOptions {
  * Requires `@alibaba-group/opensandbox` to be installed as a peer dependency.
  */
 export const openSandbox = (
-  options?: OpenSandboxOptions,
+  options: OpenSandboxOptions,
 ): IsolatedSandboxProvider =>
   createIsolatedSandboxProvider({
     name: "opensandbox",
@@ -106,7 +108,7 @@ export const openSandbox = (
         connectionConfig,
       };
 
-      if (options?.image) createParams.image = options.image;
+      createParams.image = options.image;
       if (options?.snapshotId) createParams.snapshotId = options.snapshotId;
       if (options?.timeoutSeconds !== undefined)
         createParams.timeoutSeconds = options.timeoutSeconds;
@@ -195,10 +197,10 @@ export const openSandbox = (
 
           const stdout = execution.logs.stdout
             .map((m: { text: string }) => m.text)
-            .join("");
+            .join("\n");
           const stderr = execution.logs.stderr
             .map((m: { text: string }) => m.text)
-            .join("");
+            .join("\n");
 
           return {
             stdout,
@@ -213,26 +215,22 @@ export const openSandbox = (
         ): Promise<void> => {
           const info = await stat(hostPath);
           if (info.isDirectory()) {
-            const walk = async (dir: string): Promise<string[]> => {
-              const entries = await readdir(dir, { withFileTypes: true });
-              const files: string[] = [];
-              for (const entry of entries) {
-                const full = join(dir, entry.name);
-                if (entry.isDirectory()) {
-                  files.push(...(await walk(full)));
-                } else {
-                  files.push(full);
-                }
-              }
-              return files;
-            };
-            const files = await walk(hostPath);
-            for (const file of files) {
-              const rel = relative(hostPath, file).split(sep).join("/");
-              const content = await readFile(file);
+            const tarPath = join(
+              tmpdir(),
+              `sandcastle-copyin-${Date.now()}.tar.gz`,
+            );
+            execSync(`tar -czf "${tarPath}" -C "${hostPath}" .`);
+            try {
+              const tarContent = await readFile(tarPath);
+              const sandboxTarPath = `/tmp/sandcastle-copyin-${Date.now()}.tar.gz`;
               await sandbox.files.writeFiles([
-                { path: posix.join(sandboxPath, rel), data: content },
+                { path: sandboxTarPath, data: tarContent },
               ]);
+              await sandbox.commands.run(
+                `mkdir -p "${sandboxPath}" && tar -xzf "${sandboxTarPath}" -C "${sandboxPath}" && rm -f "${sandboxTarPath}"`,
+              );
+            } finally {
+              await unlink(tarPath).catch(() => {});
             }
           } else {
             const content = await readFile(hostPath);

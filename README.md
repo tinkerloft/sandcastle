@@ -58,7 +58,7 @@ import { docker } from "@ai-hero/sandcastle/sandboxes/docker";
 
 await run({
   agent: claudeCode("claude-opus-4-6"),
-  sandbox: docker(), // or podman(), vercel(), openSandbox(), or your own provider
+  sandbox: docker(), // or podman(), vercel(), openSandbox({ image: "ubuntu" }), or your own provider
   promptFile: ".sandcastle/prompt.md",
 });
 ```
