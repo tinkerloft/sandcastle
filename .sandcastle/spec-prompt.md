@@ -24,13 +24,15 @@ Verify that the implementation on branch {{BRANCH}} satisfies every requirement 
 
 # PROCESS
 
-1. Read the issue body and every comment carefully. Extract each discrete requirement — including implementation details, option shapes, naming conventions, and acceptance criteria.
+1. Read the issue body AND every comment. Comments are not feedback — they are **additional or corrective requirements** that override or extend the original issue body. The most recent comment is the most authoritative.
 
-2. For each requirement, check the diff and decide: SATISFIED, UNSATISFIED, or N/A.
+2. Produce an explicit numbered list of every requirement, sourcing each one as either "issue body" or "comment (N)". Do not skip requirements from comments.
 
-3. For every UNSATISFIED requirement, make the fix directly on this branch. Run `npm run typecheck` and `npm test` after each fix to confirm nothing is broken.
+3. For each requirement in your list, check the diff and state: SATISFIED, UNSATISFIED, or N/A. Be strict — "close enough" is UNSATISFIED.
 
-4. Once all requirements are satisfied, commit any fixes with a message starting with `RALPH: Spec -`.
+4. For every UNSATISFIED requirement, make the fix directly on this branch. Run `npm run typecheck` and `npm test` after each fix to confirm nothing is broken.
+
+5. Once all requirements are SATISFIED, commit any fixes with a message starting with `RALPH: Spec -`.
 
 If everything was already correct, do nothing.
 
@@ -41,3 +43,4 @@ Once complete, output <promise>COMPLETE</promise>.
 - Only fix spec compliance gaps. Do not refactor, rename, or improve code quality — that is the next pass.
 - Do not add features beyond what the issue requires.
 - If a requirement is ambiguous, resolve it conservatively (closest to what the issue literally says).
+- You MUST work through every item in your numbered list. Do not stop after fixing the first unsatisfied requirement.
